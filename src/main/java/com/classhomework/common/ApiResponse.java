@@ -1,50 +1,56 @@
 package com.classhomework.common;
 
-import lombok.Data;
-
-@Data
 public class ApiResponse<T> {
-    private Integer code;
+    private int code;
     private String message;
     private T data;
 
+    // 构造方法
+    public ApiResponse() {}
+
+    public ApiResponse(int code, String message, T data) {
+        this.code = code;
+        this.message = message;
+        this.data = data;
+    }
+
     // 成功响应
     public static <T> ApiResponse<T> success(T data) {
-        ApiResponse<T> response = new ApiResponse<>();
-        response.setCode(200);
-        response.setMessage("success");
-        response.setData(data);
-        return response;
+        return new ApiResponse<>(200, "success", data);
     }
 
-    // 成功响应（无数据）
-    public static <T> ApiResponse<T> success() {
-        return success(null);
+    // 错误响应
+    public static <T> ApiResponse<T> error(String message) {
+        return new ApiResponse<>(500, message, null);
     }
 
-    // 错误响应（你缺少的方法）
-    public static <T> ApiResponse<T> error(Integer code, String message) {
-        ApiResponse<T> response = new ApiResponse<>();
-        response.setCode(code);
-        response.setMessage(message);
-        response.setData(null);
-        return response;
+    // 错误响应带状态码
+    public static <T> ApiResponse<T> error(int code, String message) {
+        return new ApiResponse<>(code, message, null);
     }
 
-    // 常用错误响应（可选添加）
-    public static <T> ApiResponse<T> badRequest(String message) {
-        return error(400, message);
+    // Getters and Setters
+    public int getCode() {
+        return code;
     }
 
-    public static <T> ApiResponse<T> unauthorized(String message) {
-        return error(401, message);
+    public void setCode(int code) {
+        this.code = code;
     }
 
-    public static <T> ApiResponse<T> notFound(String message) {
-        return error(404, message);
+    public String getMessage() {
+        return message;
     }
 
-    public static <T> ApiResponse<T> serverError(String message) {
-        return error(500, message);
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
     }
 }
