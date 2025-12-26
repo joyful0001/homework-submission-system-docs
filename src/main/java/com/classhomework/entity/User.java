@@ -1,12 +1,16 @@
 package com.classhomework.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+// 核心：确保User是顶级类，移除内部嵌套的User类
+@Data // Lombok自动生成getter/setter/toString等，替代所有手动getter/setter
 @Entity
-@Table(name = "users")
+@Table(name = "users") // 统一表名，避免和内置关键字冲突
 public class User {
 
     @Id
@@ -22,9 +26,15 @@ public class User {
     @Column(name = "name", nullable = false, length = 50)
     private String name;
 
+    @Column(unique = true)
+    private String email;
+
+    private String phone;
+
+    // 只保留枚举类型的role字段（删除重复的String类型role）
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
-    private UserRole role;
+    private UserRole role; // 统一用UserRole枚举，避免类型冲突
 
     @Column(name = "class_name", length = 100)
     private String className;
@@ -45,7 +55,7 @@ public class User {
     @OneToMany(mappedBy = "uploader", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<File> uploadedFiles = new ArrayList<>();
 
-    // 枚举类型
+    // 角色枚举（统一命名为UserRole，避免和其他枚举冲突）
     public enum UserRole {
         STUDENT, TEACHER
     }
@@ -61,10 +71,10 @@ public class User {
         this.username = username;
         this.password = password;
         this.name = name;
-        this.role = role;
+        this.role = role; // 这里赋值枚举类型，不再有类型冲突
     }
 
-    // 预持久化方法
+    // 预持久化/更新方法保留
     @PrePersist
     protected void onCreate() {
         createdTime = LocalDateTime.now();
@@ -76,105 +86,6 @@ public class User {
         updatedTime = LocalDateTime.now();
     }
 
-    // Getter和Setter方法
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public UserRole getRole() {
-        return role;
-    }
-
-    public void setRole(UserRole role) {
-        this.role = role;
-    }
-
-    public String getClassName() {
-        return className;
-    }
-
-    public void setClassName(String className) {
-        this.className = className;
-    }
-
-    public LocalDateTime getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(LocalDateTime createdTime) {
-        this.createdTime = createdTime;
-    }
-
-    public LocalDateTime getUpdatedTime() {
-        return updatedTime;
-    }
-
-    public void setUpdatedTime(LocalDateTime updatedTime) {
-        this.updatedTime = updatedTime;
-    }
-
-    public List<Homework> getAssignedHomeworks() {
-        return assignedHomeworks;
-    }
-
-    public void setAssignedHomeworks(List<Homework> assignedHomeworks) {
-        this.assignedHomeworks = assignedHomeworks;
-    }
-
-    public List<Submission> getSubmissions() {
-        return submissions;
-    }
-
-    public void setSubmissions(List<Submission> submissions) {
-        this.submissions = submissions;
-    }
-
-    public List<File> getUploadedFiles() {
-        return uploadedFiles;
-    }
-
-    public void setUploadedFiles(List<File> uploadedFiles) {
-        this.uploadedFiles = uploadedFiles;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", name='" + name + '\'' +
-                ", role=" + role +
-                ", className='" + className + '\'' +
-                ", createdTime=" + createdTime +
-                ", updatedTime=" + updatedTime +
-                '}';
-    }
+    // 【关键】删除所有手动写的getter/setter/toString
+    // 因为@Data注解会自动生成，手动写会冲突；若需要自定义某个getter，再单独写
 }
