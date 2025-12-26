@@ -2,6 +2,7 @@ package com.classhomework.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "submissions")
@@ -43,6 +44,19 @@ public class Submission {
 
     @Column(name = "updated_time", nullable = false)
     private LocalDateTime updatedTime;
+
+    // 在Submission实体中添加
+    @OneToMany(mappedBy = "submission", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<File> files; // 一个提交可以关联多个文件
+
+    // 补充Getter和Setter
+    public List<File> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<File> files) {
+        this.files = files;
+    }
 
     // 枚举类型
     public enum SubmissionStatus {

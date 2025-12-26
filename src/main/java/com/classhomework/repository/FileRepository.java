@@ -7,8 +7,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface FileRepository extends JpaRepository<File, String> {
-    List<File> findByUploaderId(Long uploaderId);
-    List<File> findByFileNameContaining(String keyword);
-    List<File> findByMimeType(String mimeType);
+public interface FileRepository extends JpaRepository<File, Long> {
+    // 获取提交相关的所有文件
+    List<File> findBySubmissionId(Long submissionId);
+
+    // 获取作业相关的所有文件
+    List<File> findByHomeworkId(Long homeworkId);
 }
